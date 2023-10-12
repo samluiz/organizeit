@@ -9,6 +9,7 @@ import (
 
 func NewSQLiteConnection() (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", "config/database/organizeit.db")
+	
 	if err != nil {
 		return nil, err
 	}

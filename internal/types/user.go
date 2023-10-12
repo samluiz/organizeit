@@ -16,3 +16,7 @@ type User struct {
 func (u *User) ScanRow(row *sql.Row) error {
 	return row.Scan(&u.ID, &u.Email, &u.Password, &u.CreatedAt, &u.UpdatedAt)
 }
+
+func (u *User) ScanRows(rows *sql.Rows) error {
+	return rows.Scan(&u.ID, &u.Email, &u.Password, &u.CreatedAt, &u.UpdatedAt)
+}

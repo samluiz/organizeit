@@ -8,7 +8,15 @@ type Scanner interface {
 	ScanRow(*sql.Row) error
 }
 
-func create(db *sql.DB, tableName string, sql string, s Scanner, args ...interface{}) error {
+type Repository struct {
+	db *sql.DB
+}
+
+func NewRepository(db *sql.DB) *Repository {
+	return &Repository{db}
+}
+
+func (r *Repository) Create(db *sql.DB, tableName string, sql string, s Scanner, args ...interface{}) error {
 	rs, err := db.Exec(sql, args...)
 
 	if err != nil {

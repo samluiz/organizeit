@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/samluiz/organizeit/config"
+	"github.com/samluiz/organizeit/internal/adapters"
 	"github.com/samluiz/organizeit/internal/handlers"
-	"github.com/samluiz/organizeit/internal/repositories"
 )
 
 func main() {
@@ -19,16 +19,18 @@ func main() {
 
 	defer db.Close()
 
-	repo := repositories.NewRepository(db)
+	userAdapter := adapters.NewAdapter(db)
 
-	userHandler := handlers.UserHandler{Repository: repo}
+	userHandler := handlers.UserHandler{Adapter: userAdapter}
 
-	http.HandleFunc("/users", userHandler.HandlePostUser)
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/api", handler)
+	http.HandleFunc("/api/users/create", userHandler.HandleCreateUser)
+	http.HandleFunc("/api/users/get", userHandler.HandleGetUsers)
 
 	PORT := ":8000"
-	errs := http.ListenAndServe(PORT, nil)
-	fmt.Println(errs)
+	log.Default().Println("Server running on port", PORT)
+	err = http.ListenAndServe(PORT, nil)
+	log.Fatal(err)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

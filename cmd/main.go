@@ -19,13 +19,18 @@ func main() {
 
 	defer db.Close()
 
-	userAdapter := adapters.NewAdapter(db)
+	userAdapter := adapters.NewUserAdapter(db)
+	expenseAdapter := adapters.NewExpenseAdapter(db)
 
 	userHandler := handlers.UserHandler{Adapter: userAdapter}
+	expenseHandler := handlers.ExpenseHandler{ExpenseAdapter: expenseAdapter, UserAdapter: userAdapter}
 
 	http.HandleFunc("/api", handler)
 	http.HandleFunc("/api/users/create", userHandler.HandleCreateUser)
-	http.HandleFunc("/api/users/get", userHandler.HandleGetUsers)
+	http.HandleFunc("/api/users/getAll", userHandler.HandleGetUsers)
+	http.HandleFunc("/api/users/get", userHandler.HandleGetUserById)
+
+	http.HandleFunc("/api/expenses/create", expenseHandler.HandleCreateExpense)
 
 	PORT := ":8000"
 	log.Default().Println("Server running on port", PORT)

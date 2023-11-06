@@ -16,7 +16,7 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db}
 }
 
-func (r *Repository) Create(db *sql.DB, tableName string, sql string, s Scanner, args ...interface{}) error {
+func (r *Repository) CreateOrMerge(db *sql.DB, tableName string, sql string, s Scanner, args ...interface{}) error {
 	rs, err := db.Exec(sql, args...)
 
 	if err != nil {
@@ -30,4 +30,8 @@ func (r *Repository) Create(db *sql.DB, tableName string, sql string, s Scanner,
 	}
 
 	return s.ScanRow(db.QueryRow("SELECT * FROM " + tableName + " WHERE id = ?", lastInsertId))
+}
+
+func (r *Repository) QueryRow(db *sql.DB, sql string, s Scanner, args ...interface{}) error {
+	return s.ScanRow(db.QueryRow(sql, args...))
 }
